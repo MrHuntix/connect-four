@@ -1,0 +1,44 @@
+<html>
+
+<head>
+  <title>Connect 4</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"
+    integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g=="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"
+    integrity="sha512-WIklPM6qPCIp6d3fSSr90j+1unQHUOoWDS4sdTiR8gxUTnyZ8S2Mr8e10sKKJ/bhJgpAa/qG068RDkg6fIlNFA=="
+    crossorigin="anonymous"></script>
+  <script type="text/javascript" src="/main.js"></script>
+  <script type="text/javascript" src="/box.js"></script>
+  <script type="text/javascript" src="/arena.js"></script>
+  <style>
+    div {
+      margin: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h3>Welcome to connect 4</h3>
+    <p>
+      Please click on find and sit back till we find you an opponent.
+    </p>
+  </div>
+  <div id="gameContainer" class="container">
+
+  </div>
+  <div class="container">
+    <button id="find" onclick="find()">find</button>
+    <button id="reset" onclick="reset()">reset</button>
+    <h2 id="gameMessage"></h2>
+  </div>
+</body>
+
+</html>
