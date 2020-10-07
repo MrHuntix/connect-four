@@ -6,7 +6,7 @@ var userDao = {
         users.set(userId, {
             socket: socket,
             inGame: false
-        })
+        });
         socket.emit("join", {
             id: socket.id
           });

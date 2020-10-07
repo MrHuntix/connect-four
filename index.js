@@ -6,7 +6,7 @@ let io = require('socket.io')(http);
 let userDao = require('./user');
 var path = require('path');
 
-let port = 8080 || env.PORT;
+let port = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, 'static')));
 app.get('/', (req, resp) => {
   resp.sendFile('index.html');
