@@ -4,6 +4,7 @@ let id;
 let socket = io();
 let myTurn = false;
 let messageBox;
+let gameStarted = false;
 
 socket.on('find', (message) => {
     console.log(`found opponent ${message.opponentId},${message.isTurn}`);
@@ -41,7 +42,12 @@ socket.on('after-turn', (message) => {
 socket.on('looser', (message) => {
     //arena.initBoard();
     myTurn = false;
+    gameStarted = false;
     //console.log(`winner is ${message.opponent}`);
+    message.winningSet.forEach(point => {
+        arena.changeBoxCircleColor(point.x,point.y,'black');
+    });
+    arena.draw();
     messageBox.html('You loose..Please reset before finding a new game.');
     noLoop();
 })
@@ -49,8 +55,17 @@ socket.on('looser', (message) => {
 socket.on('draw', (message) => {
     noLoop();
     myTurn = false;
+    gameStarted = false;
     arena.initBoard();
     messageBox.html(message.gameMessage);
+});
+
+socket.on('rage-quit',(message)=>{
+    messageBox.html('oops looks like your opponent rage quit. Please reset before finding a new game');
+    arena.initBoard();
+    gameStarted = false;
+    myTurn = false;
+    arena.draw();
 });
 
 let username;
@@ -69,7 +84,7 @@ function draw() {
     if (arena.getTotalMoves() >= 42) {
         myTurn = false;
         messageBox.html('it\'s a draw.Please reset before finding a new game.');
-        socket.emit('draw',{
+        socket.emit('draw', {
             opponent: arena.getOpponentId()
         });
         noLoop();
@@ -77,12 +92,18 @@ function draw() {
     if (arena.checkWinner()) {
         //arena.initBoard();
         console.log(`looser is ${arena.getOpponentId()}, winner is ${arena.getPlayerId()}`);
-        socket.emit('end',{
-            winner:arena.getPlayerId(),
-            looser:arena.getOpponentId()
+        socket.emit('end', {
+            winner: arena.getPlayerId(),
+            looser: arena.getOpponentId(),
+            winningSet: arena.getInputSet()
         });
+        arena.getInputSet().forEach(point => {
+            arena.changeBoxCircleColor(point.x,point.y,'black');
+        });
+        arena.draw();
         noLoop();
         myTurn = false;
+        gameStarted = false;
         messageBox.html('You win.Please reset before finding a new game.');
     }
     arena.draw();
@@ -93,9 +114,9 @@ function mouseClicked() {
         if (mouseX > 400 || mouseY > 400) {
             console.log("outside arena");
         } else {
-            if(arena.click(mouseX, mouseY)) {
-            messageBox.html('Waiting for opponent to play their turn');
-            myTurn = false;
+            if (arena.click(mouseX, mouseY)) {
+                messageBox.html('Waiting for opponent to play their turn');
+                myTurn = false;
             } else {
                 messageBox.html('only column click allowed');
             }
@@ -111,11 +132,16 @@ function find() {
 }
 
 function reset() {
+    console.log(`reset ${gameStarted}`);
+    if(gameStarted) {myTurn = false;}
     socket.emit('post-game', {
-        id:arena.getPlayerId()
+        id: arena.getPlayerId(),
+        opponent:arena.getOpponentId(),
+        gameStarted:gameStarted
     });
     messageBox.html('');
     arena.initBoard();
     gameStarted = false;
+    
     arena.draw();
 }

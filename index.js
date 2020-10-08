@@ -6,7 +6,7 @@ let io = require('socket.io')(http);
 let userDao = require('./user');
 var path = require('path');
 
-let port = process.env.PORT || 5000;
+let port = process.env.PORT || 8080;
 app.use(express.static(path.join(__dirname, 'static')));
 app.get('/', (req, resp) => {
   resp.sendFile('index.html');
@@ -40,7 +40,15 @@ io.on('connection', (socket) => {
   });
 
   socket.on('post-game', (message)=>{
-    userDao.updateInGameStatus(message.id, false);
+    console.log(`game started ${message.gameStarted}`);
+    if(message.gameStarted) {
+      console.log(`rage quit ${message.opponent}`);
+      io.to(message.opponent).emit('rage-quit');
+      userDao.updateInGameStatus(message.opponent, false);
+      userDao.updateInGameStatus(message.id, false);
+    } else {
+      userDao.updateInGameStatus(message.id, false);
+    }
   });
   
   socket.on('disconnect', () => {
@@ -62,7 +70,9 @@ io.on('connection', (socket) => {
     console.log(`looser is ${message.looser}, winner is ${message.winner}`);
     //userDao.updateInGameStatus(message.looser, false);
     //userDao.updateInGameStatus(message.winner, false);
-    io.to(message.looser).emit('looser');
+    io.to(message.looser).emit('looser', {
+      winningSet:message.winningSet
+    });
   });
 
   socket.on('draw', (message)=>{

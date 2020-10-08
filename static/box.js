@@ -26,4 +26,8 @@ function Box(x, y) {
 	this.getColor = function() {
 		return this.circleColor;
 	}
+
+	this.setColor = function(color) {
+		this.circleColor = color;
+	}
 }

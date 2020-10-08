@@ -31,6 +31,11 @@ var userDao = {
     updateInGameStatus:function(socketId, status) {
         console.log(`updating inGame status for ${socketId} with status ${status}`);
         users.get(socketId).inGame = status;
+    },
+    updateAndDisconnect:function(socketId) {
+        console.log(`updateAndDisconnect for ${socketId} `);
+        users.get(socketId).inGame = false;
+        users.get(socketId).socket.disconnect();
     }
 }
 
